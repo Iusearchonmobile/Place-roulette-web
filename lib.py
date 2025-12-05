@@ -26,18 +26,30 @@ def getrand(keyword: str, plrsunder: int, plrsover: int, excluisons=[]):
                         if game.get("playerCount", 0) <= plrsunder and game.get("playerCount", 0) >= plrsover and game.get("rootPlaceId") not in excluisons:
                             imageurljson = requests.get(f"https://thumbnails.roblox.com/v1/games/icons?universeIds={game.get('universeId')}&size=150x150&format=Png&isCircular=false").json()
                             image_url = imageurljson["data"][0]["imageUrl"]
+
+                            detailsjson = requests.get(f'https://games.roblox.com/v1/games?universeIds={game.get("universeId")}&languageCode=en_us').json()['data'][0]
+
                             return {
                                 'placeid': game.get("rootPlaceId"),
                                 'universeid': game.get("universeId"),
                                 'name': game.get("name"),
-                                'description': game.get("description"),
+                                'description': detailsjson["description"],
                                 'plrs': game.get("playerCount", 0),
                                 'thumbnail': image_url,
                                 'votes': {
                                     'totalUpVotes': game.get("totalUpVotes"),
                                     'totalDownVotes': game.get("totalDownVotes"),
                                     'totalVotes': game.get("totalUpVotes") - game.get("totalDownVotes"),
-                                }
+                                },
+                                'url': f"https://www.roblox.com/games/{game.get('rootPlaceId')}",
+                                'creator': detailsjson["creator"]["name"],
+                                'made': detailsjson["created"].split("T")[0],
+                                'updated': detailsjson["updated"].split("T")[0],
+                                'visits': detailsjson["visits"],
+                                'maxplrs': detailsjson["maxPlayers"],
+                                'avatar': detailsjson["universeAvatarType"],
+                                'genre': f"{detailsjson['genre_l1']} {detailsjson['genre_l2']}",
+                                'favourites': detailsjson["favoritedCount"],
                             }
 
         token = res.get("nextPageToken")
@@ -53,5 +65,14 @@ def getrand(keyword: str, plrsunder: int, plrsover: int, excluisons=[]):
                         'totalUpVotes': 1,
                         'totalDownVotes': 1,
                         'totalVotes': 1,
-                    }
+                    },
+                    'url': "https://www.roblox.com/games/nan",
+                    'creator': 'non',
+                    'made': "9999-99-99",
+                    'updated': "9999-99-99",
+                    'visits': 1,
+                    'maxplrs': 1,
+                    'avatar': 'non',
+                    'genre': "non",
+                    'favourites': 1,
                 }
