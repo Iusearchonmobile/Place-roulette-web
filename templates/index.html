@@ -22,7 +22,7 @@
 
         body {
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -42,16 +42,15 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
 
-        /* Settings Area */
         .settings-row {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             flex-wrap: wrap;
         }
 
@@ -73,12 +72,11 @@
             color: var(--text-main);
             padding: 6px;
             border-radius: 6px;
-            width: 45px; /* Compact width to fit 3 inputs */
+            width: 45px;
             text-align: center;
             font-size: 13px;
         }
 
-        /* Make keyword input slightly wider */
         #inputKeyword {
             width: 50px;
         }
@@ -98,10 +96,10 @@
             background-color: var(--btn-next-hover);
         }
 
-        /* Thumbnail */
         .thumbnail-container {
             position: relative;
             width: 100%;
+            padding-top: 56.25%;
             padding-top: 100%;
             overflow: hidden;
             border-radius: 8px;
@@ -118,26 +116,46 @@
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 22px;
             margin: 0;
             font-weight: 700;
+            line-height: 1.2;
         }
 
-        .stats-row {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
+        .creator-text {
             color: var(--text-sub);
             font-size: 14px;
+            margin-top: -8px;
+            margin-bottom: 4px;
         }
 
-        .stat-item {
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 12px;
+            background-color: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .stat-pair {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 6px;
         }
 
-        /* Voting */
+        .stat-label {
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .stat-val {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
         .vote-container {
             background: rgba(0,0,0,0.2);
             padding: 10px;
@@ -188,24 +206,22 @@
             width: 50%;
         }
 
-        /* Description */
         .description-box {
             background-color: rgba(0,0,0,0.1);
             padding: 10px;
             border-radius: 6px;
             font-size: 13px;
             color: var(--text-sub);
-            max-height: 100px;
+            max-height: 80px;
             overflow-y: auto;
             text-align: left;
+            white-space: pre-wrap;
         }
 
-        /* Buttons */
         .action-buttons {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-top: 10px;
         }
 
         .btn {
@@ -250,25 +266,21 @@
     <div class="container" id="mainContainer">
 
         <div class="settings-row">
-            <!-- Under -->
             <div class="setting-group">
                 <label class="settings-label" for="inputPlrsUnder">Under:</label>
                 <input type="number" id="inputPlrsUnder" class="settings-input" value="5">
             </div>
 
-            <!-- Over -->
             <div class="setting-group">
                 <label class="settings-label" for="inputPlrsOver">Over:</label>
                 <input type="number" id="inputPlrsOver" class="settings-input" value="5">
             </div>
 
-            <!-- Keyword -->
             <div class="setting-group">
                 <label class="settings-label" for="inputKeyword">Key:</label>
                 <input type="text" id="inputKeyword" class="settings-input" value="\n">
             </div>
 
-            <!-- Reset -->
             <button id="btnReset" class="btn-reset">Reset</button>
         </div>
 
@@ -277,11 +289,46 @@
         </div>
 
         <h1 id="gameName">Loading...</h1>
+        <div id="gameCreator" class="creator-text">By ...</div>
 
-        <div class="stats-row">
-            <div class="stat-item">
-                <span style="font-weight: bold;" id="playerCount">0</span>
-                <span>Active Playing</span>
+        <div class="details-grid">
+            <div class="stat-pair">
+                <span class="stat-label">Active</span>
+                <span class="stat-val" id="statPlayers">0</span>
+            </div>
+            <div class="stat-pair">
+                <span class="stat-label">Max Players</span>
+                <span class="stat-val" id="statMaxPlayers">0</span>
+            </div>
+            <div class="stat-pair">
+                <span class="stat-label">Visits</span>
+                <span class="stat-val" id="statVisits">0</span>
+            </div>
+            <div class="stat-pair">
+                <span class="stat-label">Favorites</span>
+                <span class="stat-val" id="statFavs">0</span>
+            </div>
+
+            <div class="stat-pair" style="grid-column: span 2; justify-content: center; gap: 10px;">
+                <span class="stat-label">Genre</span>
+                <span class="stat-val" id="statGenre">-</span>
+            </div>
+
+            <div class="stat-pair">
+                <span class="stat-label">Avatar</span>
+                <span class="stat-val" id="statAvatar">-</span>
+            </div>
+            <div class="stat-pair">
+                <span class="stat-label">Created</span>
+                <span class="stat-val" id="statCreated">-</span>
+            </div>
+            <div class="stat-pair">
+                <span class="stat-label">Updated</span>
+                <span class="stat-val" id="statUpdated">-</span>
+            </div>
+            <div class="stat-pair">
+                <span class="stat-label">ID</span>
+                <span class="stat-val" id="statPlaceId">-</span>
             </div>
         </div>
 
@@ -325,14 +372,26 @@
             container: document.getElementById('mainContainer'),
             thumb: document.getElementById('gameThumb'),
             name: document.getElementById('gameName'),
+            creator: document.getElementById('gameCreator'),
             desc: document.getElementById('gameDesc'),
-            plrs: document.getElementById('playerCount'),
+
+            statPlayers: document.getElementById('statPlayers'),
+            statMaxPlayers: document.getElementById('statMaxPlayers'),
+            statVisits: document.getElementById('statVisits'),
+            statFavs: document.getElementById('statFavs'),
+            statGenre: document.getElementById('statGenre'),
+            statAvatar: document.getElementById('statAvatar'),
+            statCreated: document.getElementById('statCreated'),
+            statUpdated: document.getElementById('statUpdated'),
+            statPlaceId: document.getElementById('statPlaceId'),
+
             upvotes: document.getElementById('upvotes'),
             downvotes: document.getElementById('downvotes'),
             totalVotes: document.getElementById('totalVotes'),
             voteBar: document.getElementById('voteBar'),
             playBtn: document.getElementById('playBtn'),
             nextBtn: document.getElementById('nextBtn'),
+
             inputPlrsUnder: document.getElementById('inputPlrsUnder'),
             inputPlrsOver: document.getElementById('inputPlrsOver'),
             inputKeyword: document.getElementById('inputKeyword'),
@@ -400,10 +459,20 @@
 
         function updateUI(data) {
             els.name.textContent = data.name || "Unknown Title";
+            els.creator.textContent = data.creator ? `By ${data.creator}` : "";
             els.desc.textContent = data.description || "No description available.";
             els.thumb.src = data.thumbnail || "";
 
-            els.plrs.textContent = fmt(data.plrs || 0);
+            els.statPlayers.textContent = fmt(data.plrs || 0);
+            els.statMaxPlayers.textContent = fmt(data.maxplrs || 0);
+
+            els.statVisits.textContent = fmt(data.visits || 0);
+            els.statFavs.textContent = fmt(data.favourites || 0);
+            els.statGenre.textContent = data.genre || "-";
+            els.statAvatar.textContent = data.avatar || "-";
+            els.statCreated.textContent = data.made || "-";
+            els.statUpdated.textContent = data.updated || "-";
+            els.statPlaceId.textContent = data.placeid || "-";
 
             const up = data.votes.totalUpVotes || 0;
             const down = data.votes.totalDownVotes || 0;
