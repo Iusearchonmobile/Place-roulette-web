@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Place roulette in the web!</title>
+    <title>Roblox Game Viewer</title>
     <style>
         :root {
             --bg-color: #111216;
@@ -16,6 +16,8 @@
             --btn-play-hover: #008c5a;
             --btn-next: #393b3d;
             --btn-next-hover: #4e5052;
+            --input-bg: #111216;
+            --input-border: #393b3d;
         }
 
         body {
@@ -43,6 +45,60 @@
             gap: 16px;
         }
 
+        /* Settings Area */
+        .settings-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .setting-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .settings-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .settings-input {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+            padding: 6px;
+            border-radius: 6px;
+            width: 45px; /* Compact width to fit 3 inputs */
+            text-align: center;
+            font-size: 13px;
+        }
+
+        /* Make keyword input slightly wider */
+        #inputKeyword {
+            width: 50px;
+        }
+
+        .btn-reset {
+            background-color: var(--btn-next);
+            color: var(--text-main);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .btn-reset:hover {
+            background-color: var(--btn-next-hover);
+        }
+
+        /* Thumbnail */
         .thumbnail-container {
             position: relative;
             width: 100%;
@@ -81,6 +137,7 @@
             gap: 6px;
         }
 
+        /* Voting */
         .vote-container {
             background: rgba(0,0,0,0.2);
             padding: 10px;
@@ -124,13 +181,14 @@
             border-radius: 2px;
             overflow: hidden;
         }
-        
+
         .vote-bar-fill {
             height: 100%;
             background-color: var(--accent-green);
             width: 50%;
         }
 
+        /* Description */
         .description-box {
             background-color: rgba(0,0,0,0.1);
             padding: 10px;
@@ -142,6 +200,7 @@
             text-align: left;
         }
 
+        /* Buttons */
         .action-buttons {
             display: flex;
             flex-direction: column;
@@ -167,7 +226,7 @@
         .btn-play {
             background-color: var(--btn-play);
         }
-        
+
         .btn-play:hover {
             background-color: var(--btn-play-hover);
         }
@@ -189,6 +248,30 @@
 <body>
 
     <div class="container" id="mainContainer">
+
+        <div class="settings-row">
+            <!-- Under -->
+            <div class="setting-group">
+                <label class="settings-label" for="inputPlrsUnder">Under:</label>
+                <input type="number" id="inputPlrsUnder" class="settings-input" value="5">
+            </div>
+
+            <!-- Over -->
+            <div class="setting-group">
+                <label class="settings-label" for="inputPlrsOver">Over:</label>
+                <input type="number" id="inputPlrsOver" class="settings-input" value="5">
+            </div>
+
+            <!-- Keyword -->
+            <div class="setting-group">
+                <label class="settings-label" for="inputKeyword">Key:</label>
+                <input type="text" id="inputKeyword" class="settings-input" value="\n">
+            </div>
+
+            <!-- Reset -->
+            <button id="btnReset" class="btn-reset">Reset</button>
+        </div>
+
         <div class="thumbnail-container">
             <img id="gameThumb" src="" alt="Game Thumbnail">
         </div>
@@ -249,10 +332,46 @@
             totalVotes: document.getElementById('totalVotes'),
             voteBar: document.getElementById('voteBar'),
             playBtn: document.getElementById('playBtn'),
-            nextBtn: document.getElementById('nextBtn')
+            nextBtn: document.getElementById('nextBtn'),
+            inputPlrsUnder: document.getElementById('inputPlrsUnder'),
+            inputPlrsOver: document.getElementById('inputPlrsOver'),
+            inputKeyword: document.getElementById('inputKeyword'),
+            btnReset: document.getElementById('btnReset')
+        };
+
+        const DEFAULTS = {
+            plrsUnder: '5',
+            plrsOver: '5',
+            keyword: '\\n'
         };
 
         const fmt = (num) => new Intl.NumberFormat().format(num);
+
+        function constructUrl() {
+            const currentUnder = els.inputPlrsUnder.value;
+            const currentOver = els.inputPlrsOver.value;
+            const currentKeyword = els.inputKeyword.value;
+
+            let params = [];
+
+            if (currentUnder !== DEFAULTS.plrsUnder) {
+                params.push(`plrsunder=${encodeURIComponent(currentUnder)}`);
+            }
+
+            if (currentOver !== DEFAULTS.plrsOver) {
+                params.push(`plrsover=${encodeURIComponent(currentOver)}`);
+            }
+
+            if (currentKeyword !== DEFAULTS.keyword) {
+                params.push(`keyword=${encodeURIComponent(currentKeyword)}`);
+            }
+
+            if (params.length === 0) {
+                return "getjson";
+            }
+
+            return `getjson?${params.join('&')}`;
+        }
 
         async function fetchGameData() {
             els.container.classList.add('loading');
@@ -260,11 +379,11 @@
             els.nextBtn.textContent = "Loading...";
 
             try {
-                const url = "getjson"; 
+                const url = constructUrl();
                 const response = await fetch(url);
-                
+
                 if (!response.ok) throw new Error("Network response was not ok");
-                
+
                 const data = await response.json();
                 updateUI(data);
 
@@ -283,7 +402,7 @@
             els.name.textContent = data.name || "Unknown Title";
             els.desc.textContent = data.description || "No description available.";
             els.thumb.src = data.thumbnail || "";
-            
+
             els.plrs.textContent = fmt(data.plrs || 0);
 
             const up = data.votes.totalUpVotes || 0;
@@ -301,6 +420,13 @@
             els.playBtn.href = `roblox://experiences/start?placeid=${data.placeid}`;
         }
 
+        function resetSettings() {
+            els.inputPlrsUnder.value = DEFAULTS.plrsUnder;
+            els.inputPlrsOver.value = DEFAULTS.plrsOver;
+            els.inputKeyword.value = DEFAULTS.keyword;
+        }
+
+        els.btnReset.addEventListener('click', resetSettings);
         els.nextBtn.addEventListener('click', fetchGameData);
 
         document.addEventListener('DOMContentLoaded', fetchGameData);
