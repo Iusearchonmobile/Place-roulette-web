@@ -42,4 +42,16 @@ def getrand(keyword: str, plrsunder: int, plrsover: int, excluisons=[]):
 
         token = res.get("nextPageToken")
         if not token:
-            return None
+            return {
+                    'placeid': 1,
+                    'universeid': 1,
+                    'name': 'non',
+                    'description': 'non',
+                    'plrs': 1,
+                    'thumbnail': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbTO_sW0Q8frkEEz9JkqF3MVTswsLUxCIgYw&s',
+                    'votes': {
+                        'totalUpVotes': 1,
+                        'totalDownVotes': 1,
+                        'totalVotes': 1,
+                    }
+                }
