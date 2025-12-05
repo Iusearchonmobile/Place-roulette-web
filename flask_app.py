@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from lib import getrand
 import json
 
@@ -10,7 +10,19 @@ def index():
 
 @app.route('/getjson')
 def getjson():
-    res = getrand('\\n', 5, excluisons=json.loads(open('exclude.json', 'r').read()))
+    plrsunder = request.args.get('plrsunder')
+    plrsover = request.args.get('plrsover')
+    keyword = request.args.get('keyword')
+
+    if not plrsunder: plrsunder = 5
+    if not plrsover: plrsover = 5
+    if not keyword: keyword = '\\n'
+
+    plrsunder = int(plrsunder)
+    plrsover = int(plrsover)
+    keyword = str(keyword)
+
+    res = getrand(keyword, plrsunder, plrsover, excluisons=json.loads(open('exclude.json', 'r').read()))
 
     exclusions = json.load(open('exclude.json', 'r'))
 
